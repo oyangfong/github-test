@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.easybuy.dao.news.NewsMapper">
+	<cache eviction="FIFO" flushInterval="60000" size="1024" readOnly="true" />
+	
+	<insert id="add" parameterType="News">
+		INSERT into easybuy_news(title,content,createTime) 
+			values( #{title}, #{content}, #{createTime})
+	</insert>	
+	
+	<update id="update" parameterType="News">
+		 update easybuy_news set title=#{title},content=#{content} where id=#{id} 
+	</update>
+	
+	<delete id="deleteById"	parameterType="int">
+		 delete from easybuy_news where id = #{id}
+	</delete>
+	
+	<select id="getNewsById" resultType="News">
+		 select * from easybuy_news where id = #{id} 
+	</select>
+	
+	<select id="queryNewsList" resultType="News" parameterType="cn.easybuy.param.NewsParams">
+		 select id,title,content,createTime FROM easybuy_news where 1=1 
+		 <if test="title != null and title != ''">
+		 	and title like '%' #{title} '%'
+		 </if>
+		  <if test="sort != null and sort != ''">
+		 	order by #{sort}
+		 </if>
+		 <if test="isPage">
+		 	limit #{startIndex} , #{pageSize}
+		 </if>
+	</select>
+	
+	<select id="queryNewsCount" resultType="int"  parameterType="cn.easybuy.param.NewsParams">
+		 select count(*) as count FROM easybuy_news where 1=1 
+		 <if test="title != null and title != ''">
+		 	and title like '%' #{title} '%'
+		 </if>
+	</select>
+	
+</mapper>
